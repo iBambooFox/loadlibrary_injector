@@ -20,25 +20,28 @@
     <ClCompile Include="source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utilities\c_dump.cpp">
+    <ClCompile Include="utilities\n_dump.cpp">
       <Filter>Source Files\utilities</Filter>
     </ClCompile>
-    <ClCompile Include="utilities\c_library.cpp">
+    <ClCompile Include="utilities\n_library.cpp">
       <Filter>Source Files\utilities</Filter>
     </ClCompile>
-    <ClCompile Include="utilities\c_process.cpp">
+    <ClCompile Include="utilities\n_process.cpp">
       <Filter>Source Files\utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="utilities\c_dump.hpp">
+    <ClInclude Include="utilities\n_dump.hpp">
       <Filter>Header Files\utilities</Filter>
     </ClInclude>
-    <ClInclude Include="utilities\c_library.hpp">
+    <ClInclude Include="utilities\n_library.hpp">
       <Filter>Header Files\utilities</Filter>
     </ClInclude>
-    <ClInclude Include="utilities\c_process.hpp">
+    <ClInclude Include="utilities\n_process.hpp">
       <Filter>Header Files\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="includes.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

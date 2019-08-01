@@ -1,10 +1,11 @@
 #include "c_library.hpp"
 
-c_library library;
-
-void c_library::initialise_library(const char* library_name) noexcept {
-	if (!library_name)
+using namespace injector;
+void n_library::initialise_library(std::string library_name) noexcept {
+	if (library_name.length() <= (size_t)0)
 		return;
-	
-	GetFullPathNameA(library_name, MAX_PATH, this->library_path, 0);
+
+	std::string return_value;
+	if (GetFullPathName(library_name.c_str(), MAX_PATH, (LPSTR)return_value.c_str(), NULL))
+		library_path = return_value;
 }

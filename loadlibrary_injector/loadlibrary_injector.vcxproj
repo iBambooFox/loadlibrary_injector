@@ -105,6 +105,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,14 +130,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source.cpp" />
-    <ClCompile Include="utilities\c_dump.cpp" />
-    <ClCompile Include="utilities\c_library.cpp" />
-    <ClCompile Include="utilities\c_process.cpp" />
+    <ClCompile Include="utilities\n_dump.cpp" />
+    <ClCompile Include="utilities\n_library.cpp" />
+    <ClCompile Include="utilities\n_process.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="utilities\c_dump.hpp" />
-    <ClInclude Include="utilities\c_library.hpp" />
-    <ClInclude Include="utilities\c_process.hpp" />
+    <ClInclude Include="includes.hpp" />
+    <ClInclude Include="utilities\n_dump.hpp" />
+    <ClInclude Include="utilities\n_library.hpp" />
+    <ClInclude Include="utilities\n_process.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
