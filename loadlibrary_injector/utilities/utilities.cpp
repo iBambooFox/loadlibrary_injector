@@ -37,6 +37,21 @@ namespace utilities {
 		return true;
 	}
 
+	bool get_process_name(PROCESSENTRY32 &process_entry, std::string_view &process_name, std::uint16_t &process_id) noexcept {
+		if (!process_entry.szExeFile || process_name.length() <= (size_t)0)
+			return false;
+
+		if (process_entry.szExeFile == process_name) {
+			process_id = (std::uint16_t)process_entry.th32ProcessID;
+		}
+
+		else if (process_entry.szExeFile != process_name) {
+			return false;
+		}
+
+		return true;
+	}
+
 	bool get_process_id(std::string_view process_name, std::uint16_t &process_id) noexcept {
 		const unique_handle process_snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL));
 		if (process_snapshot.get() == INVALID_HANDLE_VALUE || process_name.length() <= (size_t)0)
@@ -45,11 +60,26 @@ namespace utilities {
 		PROCESSENTRY32 process_entry;
 		process_entry.dwSize = sizeof(PROCESSENTRY32);
 
-		if (Process32First(process_snapshot.get(), &process_entry)) // fix
-			while (Process32Next(process_snapshot.get(), &process_entry))
-				if (process_entry.szExeFile == process_name)
-					process_id = (std::uint16_t)process_entry.th32ProcessID;
+		if (Process32First(process_snapshot.get(), &process_entry)) {
+			while (Process32Next(process_snapshot.get(), &process_entry)) {
+				get_process_name(process_entry, process_name, process_id);
+			}
+		}
 
 		return true;
 	}
+
+	bool get_remote_thread_and_write(unique_handle &process_handle, unique_memory &memory_handle, data_structure local_data) noexcept {
+		if (process_handle.get() == INVALID_HANDLE_VALUE || memory_handle.get() == INVALID_HANDLE_VALUE || local_data.library_path.length() <= (size_t)0)
+			return false;
+
+		if (WriteProcessMemory(process_handle.get(), memory_handle.get(), local_data.library_path.c_str(), local_data.library_path.size(), NULL)) {
+			CreateRemoteThread(process_handle.get(), 0, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, memory_handle.get(), 0, 0);
+		
+			return true;
+		}
+
+		return false;
+	}
+
 }
