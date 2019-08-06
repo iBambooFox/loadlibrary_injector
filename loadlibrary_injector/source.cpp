@@ -1,31 +1,32 @@
 #include "utilities/utilities.hpp"
 
-int main(int argument_count, const char* argument_vector[]) {
+int main(std::uint16_t argument_count, const char* argument_vector[]) {
 	if (argument_count < (SIZE_T)2)
-		return EXIT_FAILURE;
+		; //EXIT_FAILURE
 
 	auto local_data = data_structure();
-	if (!utilities::get_library_path("cheat.dll", local_data.library_path) || !utilities::get_process_id("chrome.exe", local_data.process_identifier))
+	if (!utilities::get_library_path("cheat.dll", local_data.library_path) || !utilities::get_process_id("csgo.exe", local_data.process_identifier))
 		return EXIT_FAILURE;
 
 	std::cout << "path		-> " << local_data.library_path << std::endl;
 	std::cout << "size		-> " << sizeof(local_data.library_path) << std::endl;
 	std::cout << "identifier	-> " << local_data.process_identifier << std::endl;
 
-	auto process_rights = PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION;
-	const unique_handle process_handle(OpenProcess(process_rights, FALSE, local_data.process_identifier));
+	unique_handle process_handle(nullptr);
+	unique_memory memory_handle(nullptr);
 
-	/*
-	auto process_rights = PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION;
-	unique_handle process_handle(OpenProcess(process_rights, FALSE, data.get()->process_identifier));
-	unique_memory memory_allocated(VirtualAllocEx(process_handle.get(), NULL, sizeof(data.get()->library_path), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE));
-
-	// check if allocated memory is not null
-	if (memory_allocated.get() != nullptr) {
-		WriteProcessMemory(process_handle.get(), memory_allocated.get(), data.get()->library_path.c_str(), sizeof(data.get()->library_path), NULL);
-		CreateRemoteThread(process_handle.get(), 0, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, memory_allocated.get(), 0, 0);
+	std::uint32_t process_rights = PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION;
+	if (!utilities::get_open_process(process_handle, process_rights, false, local_data.process_identifier)) {
+		return EXIT_FAILURE;
 	}
-	*/
 
-	return EXIT_SUCCESS;
+	std::uint32_t memory_rights = MEM_RESERVE | MEM_COMMIT;
+	if (!utilities::get_allocated_memory(memory_handle, process_handle, local_data, memory_rights, PAGE_READWRITE)) {
+		return EXIT_FAILURE;
+	}
+
+	if (memory_handle.get() != INVALID_HANDLE_VALUE) {
+		WriteProcessMemory(process_handle.get(), memory_handle.get(), local_data.library_path.c_str(), local_data.library_path.length, NULL);
+		CreateRemoteThread(process_handle.get(), 0, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, memory_handle.get(), 0, 0);
+	}
 }

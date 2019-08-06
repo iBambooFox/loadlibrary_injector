@@ -5,11 +5,23 @@ namespace utilities {
 		if (!process_rights || !process_identifier)
 			return false;
 		
-		unique_handle return_handle(OpenProcess(process_rights, inherit_handle, process_identifier));
-		if (return_handle.get() == INVALID_HANDLE_VALUE)
+		unique_handle return_process_handle(OpenProcess(process_rights, inherit_handle, process_identifier));
+		if (return_process_handle.get() == INVALID_HANDLE_VALUE)
 			return false;
 
-		process_handle.swap(return_handle);
+		process_handle = std::move(return_process_handle);
+		return true;
+	}
+
+	bool get_allocated_memory(unique_memory &memory_handle, unique_handle &process_handle, data_structure data, std::uint32_t memory_rights, std::uint16_t memory_protect) noexcept {
+		if (data.library_path.length() <= (size_t)0 || !data.process_identifier || !memory_rights || !memory_protect)
+			return false;
+
+		unique_memory return_memory_handle(VirtualAllocEx(process_handle.get(), 0x0, sizeof(data.library_path), memory_rights, memory_protect));
+		if (return_memory_handle.get() == INVALID_HANDLE_VALUE)
+			return false;
+
+		memory_handle = std::move(return_memory_handle);
 		return true;
 	}
 
@@ -25,18 +37,18 @@ namespace utilities {
 		return true;
 	}
 
-	bool get_process_id(std::string_view process_name, int &process_id) noexcept {
+	bool get_process_id(std::string_view process_name, std::uint16_t &process_id) noexcept {
 		const unique_handle process_snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL));
-		if (process_snapshot.get() == INVALID_HANDLE_VALUE)
+		if (process_snapshot.get() == INVALID_HANDLE_VALUE || process_name.length() <= (size_t)0)
 			return false;
 
 		PROCESSENTRY32 process_entry;
 		process_entry.dwSize = sizeof(PROCESSENTRY32);
 
-		// fix iteration
-		while (Process32Next(process_snapshot.get(), &process_entry))
-			if (process_entry.szExeFile == process_name)
-				process_id = process_entry.th32ProcessID;
+		if (Process32First(process_snapshot.get(), &process_entry)) // fix
+			while (Process32Next(process_snapshot.get(), &process_entry))
+				if (process_entry.szExeFile == process_name)
+					process_id = (std::uint16_t)process_entry.th32ProcessID;
 
 		return true;
 	}
