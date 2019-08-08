@@ -13,11 +13,11 @@ namespace utilities {
 		return true;
 	}
 
-	bool get_allocated_memory(unique_memory &memory_handle, unique_handle &process_handle, data_structure data, std::uint32_t memory_rights, std::uint16_t memory_protect) noexcept {
-		if (data.library_path.length() <= (size_t)0 || !data.process_identifier || !memory_rights || !memory_protect)
+	bool get_allocated_memory(unique_memory &memory_handle, unique_handle &process_handle, data_structure local_data, std::uint32_t memory_rights, std::uint16_t memory_protect) noexcept {
+		if (local_data.library_path.length() <= (size_t)0 || !local_data.process_identifier || !memory_rights || !memory_protect)
 			return false;
 
-		unique_memory return_memory_handle(VirtualAllocEx(process_handle.get(), 0x0, sizeof(data.library_path), memory_rights, memory_protect));
+		unique_memory return_memory_handle(VirtualAllocEx(process_handle.get(), 0x0, local_data.library_path.size(), memory_rights, memory_protect));
 		if (return_memory_handle.get() == INVALID_HANDLE_VALUE)
 			return false;
 
@@ -37,7 +37,7 @@ namespace utilities {
 		return true;
 	}
 
-	bool get_process_name(PROCESSENTRY32 &process_entry, std::string_view &process_name, std::uint16_t &process_id) noexcept {
+	bool get_process_name(PROCESSENTRY32 &process_entry, std::string &process_name, std::uint16_t &process_id) noexcept {
 		if (!process_entry.szExeFile || process_name.length() <= (size_t)0)
 			return false;
 
@@ -52,7 +52,7 @@ namespace utilities {
 		return true;
 	}
 
-	bool get_process_id(std::string_view process_name, std::uint16_t &process_id) noexcept {
+	bool get_process_id(std::string process_name, std::uint16_t &process_id) noexcept {
 		const unique_handle process_snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL));
 		if (process_snapshot.get() == INVALID_HANDLE_VALUE || process_name.length() <= (size_t)0)
 			return false;
@@ -74,12 +74,11 @@ namespace utilities {
 			return false;
 
 		if (WriteProcessMemory(process_handle.get(), memory_handle.get(), local_data.library_path.c_str(), local_data.library_path.size(), NULL)) {
-			CreateRemoteThread(process_handle.get(), 0, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, memory_handle.get(), 0, 0);
-		
+			unique_handle remote_thread(CreateRemoteThread(process_handle.get(), 0, 0, (LPTHREAD_START_ROUTINE)LoadLibrary, memory_handle.get(), 0, 0));
+
 			return true;
 		}
 
 		return false;
 	}
-
 }
