@@ -1,8 +1,7 @@
 #include "definitions.hpp"
 
-class utilities_t
+struct utilities_t
 {
-public:
 	auto get_open_process( unique_memory& process_handle, std::uint32_t process_rights, bool inherit_handle, std::uint16_t process_identifier ) -> bool
 	{
 		auto return_process_handle = unique_memory{ ::OpenProcess( process_rights, inherit_handle, process_identifier ) };
