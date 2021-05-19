@@ -1,2 +1,2 @@
-#TargetFrameworkVersion=v4.0:PlatformToolSet=v142:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit:WindowsTargetPlatformVersion=10.0
-Debug|Win32|C:\Users\BambooFox\Source\Repos\iBambooFox\loadlibrary_injector\loadlibrary_injector\|
+PlatformToolSet=v142:VCToolArchitecture=Native32Bit:VCToolsVersion=14.27.29110:TargetPlatformVersion=10.0.19041.0:
+Debug|x64|C:\Users\Hex\Source\Repos\iBambooFox\loadlibrary_injector\loadlibrary_injector\|
