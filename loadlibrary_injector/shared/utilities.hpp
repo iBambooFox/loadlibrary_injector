@@ -1,5 +1,7 @@
 #include "definitions.hpp"
 
+constexpr std::uint16_t max_path = 260;
+
 struct utilities_t
 {
 	auto get_open_process( unique_memory& process_handle, std::uint32_t process_rights, bool inherit_handle, std::uint16_t process_identifier ) -> bool
@@ -25,8 +27,8 @@ struct utilities_t
 		if ( library_name.empty( ) )
 			return false;
 
-		char return_value[ MAX_PATH ];
-		if ( !::GetFullPathNameA( library_name.c_str( ), MAX_PATH, return_value, 0 ) )
+		char return_value[ max_path ];
+		if ( !::GetFullPathNameA( library_name.c_str( ), sizeof( return_value ), return_value, 0 ) )
 			return false;
 
 		library_path += return_value;
@@ -46,7 +48,7 @@ struct utilities_t
 		return false;
 	}
 
-	auto get_process_id(std::string process_name, std::uint16_t& process_id) -> bool
+	auto get_process_id( std::string process_name, std::uint16_t& process_id ) -> bool
 	{
 		const auto process_snapshot = unique_memory{ ::CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 ) };
 		if ( process_snapshot.get( ) == INVALID_HANDLE_VALUE || process_name.empty( ) )
