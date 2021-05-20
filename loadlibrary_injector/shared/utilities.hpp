@@ -8,7 +8,7 @@ struct utilities_t
 		if ( return_process_handle.get( ) == INVALID_HANDLE_VALUE )
 			return false;
 
-		return !!( process_handle = std::move( return_process_handle ) );
+		return static_cast <bool> ( process_handle = std::move( return_process_handle ) );
 	}
 
 	auto get_allocated_memory( unique_memory& memory_handle, unique_memory& process_handle, data_structure_t local_data, std::uint32_t memory_rights, std::uint16_t memory_protect ) -> bool 
@@ -17,7 +17,7 @@ struct utilities_t
 		if ( return_memory_handle.get() == INVALID_HANDLE_VALUE )
 			return false;
 
-		return !!( memory_handle = std::move( return_memory_handle ) );
+		return static_cast <bool> ( memory_handle = std::move( return_memory_handle ) );
 	}
 
 	auto get_library_path( std::string library_name, std::string& library_path ) -> bool
@@ -40,7 +40,7 @@ struct utilities_t
 
 		if ( process_entry.szExeFile == process_name )
 		{
-			return !!( process_id = static_cast <std::uint16_t> ( process_entry.th32ProcessID ) );
+			return static_cast <bool> ( process_id = static_cast <std::uint16_t> ( process_entry.th32ProcessID ) );
 		}
 
 		return false;
