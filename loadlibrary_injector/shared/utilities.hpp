@@ -11,7 +11,7 @@ struct utilities_t
 		return !!( process_handle = std::move( return_process_handle ) );
 	}
 
-	auto get_allocated_memory( unique_memory& memory_handle, unique_memory& process_handle, data_structure local_data, std::uint32_t memory_rights, std::uint16_t memory_protect ) -> bool 
+	auto get_allocated_memory( unique_memory& memory_handle, unique_memory& process_handle, data_structure_t local_data, std::uint32_t memory_rights, std::uint16_t memory_protect ) -> bool 
 	{
 		auto return_memory_handle = unique_memory{ ::VirtualAllocEx( process_handle.get( ), 0, local_data.library_path.size( ), memory_rights, memory_protect ) };
 		if ( return_memory_handle.get() == INVALID_HANDLE_VALUE )
@@ -66,7 +66,7 @@ struct utilities_t
 		return true;
 	}
 
-	auto get_remote_thread_and_write( unique_memory& process_handle, unique_memory& memory_handle, data_structure local_data ) -> bool
+	auto get_remote_thread_and_write( unique_memory& process_handle, unique_memory& memory_handle, data_structure_t local_data ) -> bool
 	{
 		if ( process_handle.get( ) == INVALID_HANDLE_VALUE || memory_handle.get( ) == INVALID_HANDLE_VALUE || local_data.library_path.empty( ) )
 			return false;

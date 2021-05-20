@@ -5,7 +5,7 @@ auto main( std::uint16_t argument_count, std::uint8_t* argument_vector[ ] ) -> s
 	if ( argument_count < static_cast <std::size_t> ( 2 ) )
 		return exit_condition::bad;
 
-	auto local_data = data_structure {};
+	auto local_data = data_structure_t {};
 	if ( !utilities->get_library_path( reinterpret_cast <char*> ( argument_vector[ 1 ] ), local_data.library_path ) || !utilities->get_process_id( 
 		reinterpret_cast <char*> ( argument_vector[ 2 ] ), local_data.process_identifier ) )
 		return exit_condition::bad;
