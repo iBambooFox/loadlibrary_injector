@@ -83,4 +83,4 @@ struct utilities_t
 	}
 };
 
-utilities_t* utilities;
+auto utilities = std::make_shared <utilities_t> ( );
